@@ -155,8 +155,8 @@ public class CameraView extends FrameLayout implements LifecycleObserver {
         if (!isInEditMode()) {
             mDisplayOrientationDetector = new DisplayOrientationDetector(context) {
                 @Override
-                public void onDisplayOrientationChanged(int displayOrientation) {
-                    mCameraImpl.setDisplayOrientation(displayOrientation);
+                public void onDisplayOrientationChanged(int displayOrientation, int deviceOrientation) {
+                    mCameraImpl.setDisplayOrientation(displayOrientation, deviceOrientation);
                     mPreviewImpl.setDisplayOrientation(displayOrientation);
                 }
             };

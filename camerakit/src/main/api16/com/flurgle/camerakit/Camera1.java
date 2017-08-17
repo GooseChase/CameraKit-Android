@@ -7,8 +7,8 @@ import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.os.Build;
 import android.os.Handler;
-import android.util.Log;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.View;
@@ -17,7 +17,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -51,6 +50,7 @@ public class Camera1 extends CameraImpl {
     private boolean capturingImage = false;
 
     private int mDisplayOrientation;
+    private int mDeviceOrientation;
 
     @Facing
     private int mFacing;
@@ -106,8 +106,9 @@ public class Camera1 extends CameraImpl {
     }
 
     @Override
-    void setDisplayOrientation(int displayOrientation) {
+    void setDisplayOrientation(int displayOrientation, int deviceOrientation) {
         this.mDisplayOrientation = displayOrientation;
+        this.mDeviceOrientation = deviceOrientation;
     }
 
     @Override
@@ -220,6 +221,10 @@ public class Camera1 extends CameraImpl {
 
                     // Set boolean to wait for image callback
                     capturingImage = true;
+
+                    // Set the captureRotation right before taking a picture so it's accurate
+                    mCameraParameters.setRotation(calculateCaptureRotation());
+                    mCamera.setParameters(mCameraParameters);
 
                     mCamera.takePicture(null, null, null,
                         new Camera.PictureCallback() {
@@ -409,10 +414,10 @@ public class Camera1 extends CameraImpl {
         int previewRotation = calculatePreviewRotation();
         if (mCameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
             //Front is flipped
-            return (previewRotation + 180 + 2*mDisplayOrientation + 720) %360;
-        } else {
-            return previewRotation;
+            previewRotation = (previewRotation + 180 + 2 * (mDeviceOrientation) + 720) % 360;
         }
+
+        return (previewRotation + (mDeviceOrientation - mDisplayOrientation)) % 360;
     }
 
     private void adjustCameraParameters() {
@@ -483,7 +488,7 @@ public class Camera1 extends CameraImpl {
 
         mVideoFile = new File(mPreview.getView().getContext().getExternalFilesDir(null), "video.mp4");
         mMediaRecorder.setOutputFile(mVideoFile.getAbsolutePath());
-        mMediaRecorder.setOrientationHint(calculatePreviewRotation());
+        mMediaRecorder.setOrientationHint(calculateCaptureRotation());
         mMediaRecorder.setVideoSize(mCaptureSize.getWidth(), mCaptureSize.getHeight());
     }
 
