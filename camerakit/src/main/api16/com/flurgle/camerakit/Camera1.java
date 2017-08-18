@@ -222,8 +222,11 @@ public class Camera1 extends CameraImpl {
                     // Set boolean to wait for image callback
                     capturingImage = true;
 
+                    // HACK FOR PHONE TESTING:
+                    int captureRotation = calculateCaptureRotation();
+
                     // Set the captureRotation right before taking a picture so it's accurate
-                    mCameraParameters.setRotation(calculateCaptureRotation());
+                    mCameraParameters.setRotation(captureRotation);
                     mCamera.setParameters(mCameraParameters);
 
                     mCamera.takePicture(null, null, null,
@@ -412,12 +415,23 @@ public class Camera1 extends CameraImpl {
 
     private int calculateCaptureRotation() {
         int previewRotation = calculatePreviewRotation();
+
+        Log.i("CameraView", "Camera Info Orientation: " + mCameraInfo.orientation + "; Display Orientation: " + mDisplayOrientation + "; Device Orientation: " + mDeviceOrientation);
+        Log.i("CameraView", "Preview Size - Width: " + mPreviewSize.getWidth() + ", Height: " + mPreviewSize.getHeight() + "; Capture Size - Width: " + mCaptureSize.getWidth() + ", Height: " + mCaptureSize.getHeight());
+
+        Log.i("CameraView", "Preview Rotation: " + previewRotation);
         if (mCameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
             //Front is flipped
             previewRotation = (previewRotation + 180 + 2 * (mDeviceOrientation) + 720) % 360;
+
+            Log.i("CameraView", "Preview Rotation - Front Facing: " + previewRotation);
         }
 
-        return (previewRotation + (mDeviceOrientation - mDisplayOrientation)) % 360;
+        int captureRotation = (previewRotation + (mDeviceOrientation - mDisplayOrientation)) % 360;
+
+        Log.i("CameraView", "Capture Rotation: " + captureRotation);
+
+        return captureRotation;
     }
 
     private void adjustCameraParameters() {
