@@ -23,7 +23,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.hardware.display.DisplayManagerCompat;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
@@ -298,7 +297,6 @@ public class CameraView extends FrameLayout implements LifecycleObserver {
                 }
                 break;
             case PERMISSIONS_OFF:
-                Log.i("CameraView", "Permissions Off");
                 break;
         }
 

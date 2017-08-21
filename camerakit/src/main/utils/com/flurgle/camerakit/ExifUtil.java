@@ -46,44 +46,35 @@ public class ExifUtil {
 
         switch (orientation) {
             case ExifInterface.ORIENTATION_FLIP_HORIZONTAL:
-                Log.i("CameraView", "ORIENTATION_FLIP_HORIZONTAL");
                 matrix.setScale(-1, 1);
                 break;
             case ExifInterface.ORIENTATION_ROTATE_180:
-                Log.i("CameraView", "ORIENTATION_ROTATE_180");
                 matrix.setRotate(180);
                 break;
             case ExifInterface.ORIENTATION_FLIP_VERTICAL:
-                Log.i("CameraView", "ORIENTATION_FLIP_VERTICAL");
                 matrix.setRotate(180);
                 matrix.postScale(-1, 1);
                 break;
             case ExifInterface.ORIENTATION_TRANSPOSE:
-                Log.i("CameraView", "ORIENTATION_TRANSPOSE");
                 matrix.setRotate(90);
                 matrix.postScale(-1, 1);
                 break;
             case ExifInterface.ORIENTATION_ROTATE_90:
-                Log.i("CameraView", "ORIENTATION_ROTATE_90");
                 matrix.setRotate(90);
                 break;
             case ExifInterface.ORIENTATION_TRANSVERSE:
-                Log.i("CameraView", "ORIENTATION_TRANSVERSE");
                 matrix.setRotate(-90);
                 matrix.postScale(-1, 1);
                 break;
             case ExifInterface.ORIENTATION_ROTATE_270:
-                Log.i("CameraView", "ORIENTATION_ROTATE_270");
                 matrix.setRotate(-90);
                 break;
             case ExifInterface.ORIENTATION_NORMAL:
             case ExifInterface.ORIENTATION_UNDEFINED:
-                Log.i("CameraView", "ORIENTATION_NORMAL: " + orientation);
                 break;
         }
 
         if(frontFacing){
-            Log.i("CameraView", "Front Facing - Flip: " + orientation);
             matrix.postScale(-1, 1);
         }
 
