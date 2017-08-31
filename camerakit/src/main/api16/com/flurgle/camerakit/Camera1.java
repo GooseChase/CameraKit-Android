@@ -85,7 +85,6 @@ public class Camera1 extends CameraImpl {
         });
 
         mCameraInfo = new Camera.CameraInfo();
-
     }
 
     // CameraImpl:
@@ -222,10 +221,8 @@ public class Camera1 extends CameraImpl {
                     // Set boolean to wait for image callback
                     capturingImage = true;
 
-                    // HACK FOR PHONE TESTING:
-                    int captureRotation = calculateCaptureRotation();
-
                     // Set the captureRotation right before taking a picture so it's accurate
+                    int captureRotation = calculateCaptureRotation();
                     mCameraParameters.setRotation(captureRotation);
                     mCamera.setParameters(mCameraParameters);
 
@@ -359,6 +356,14 @@ public class Camera1 extends CameraImpl {
         return mCamera != null;
     }
 
+    @Override
+    boolean frontCameraOnly() {
+        Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
+        Camera.getCameraInfo(0, cameraInfo);
+        boolean isFrontCameraOnly = (Camera.getNumberOfCameras() == 1 && cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT);
+        return isFrontCameraOnly;
+    }
+
     @Nullable
     @Override
     CameraProperties getCameraProperties() {
@@ -407,21 +412,37 @@ public class Camera1 extends CameraImpl {
 
     private int calculatePreviewRotation() {
         if (mCameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-            return ((mCameraInfo.orientation - mDisplayOrientation) + 360 + 180) % 360;
+            int result = (mCameraInfo.orientation + mDisplayOrientation) % 360;
+            return (360 - result) % 360;
         } else {
             return (mCameraInfo.orientation - mDisplayOrientation + 360) % 360;
         }
     }
 
     private int calculateCaptureRotation() {
-        int previewRotation = calculatePreviewRotation();
-
+        int captureRotation = 0;
         if (mCameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-            //Front is flipped
-            previewRotation = (previewRotation + 180 + 2 * (mDeviceOrientation) + 720) % 360;
+            captureRotation = (mCameraInfo.orientation + mDisplayOrientation) % 360;
+        } else {  // back-facing camera
+            captureRotation = (mCameraInfo.orientation - mDisplayOrientation + 360) % 360;
         }
 
-        int captureRotation = (previewRotation + (mDeviceOrientation - mDisplayOrientation)) % 360;
+        // Accommodate for any extra device rotation from fixed displays
+        // (e.g. activity fixed in portrait, but user took photo/video in landscape)
+        if (mCameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+            captureRotation = ((captureRotation - (mDisplayOrientation - mDeviceOrientation)) + 360) % 360;
+        } else {  // back-facing camera
+            captureRotation = (captureRotation + (mDisplayOrientation - mDeviceOrientation) + 720) % 360;
+        }
+
+        Log.i("CameraView", "calculateCaptureRotation - CameraOrientation: " + mCameraInfo.orientation
+                + "; Preview Rotation: " + calculatePreviewRotation()
+                + "; Display Orientation: " + mDisplayOrientation
+                + "; Device Orientation: " + mDeviceOrientation
+                + "; Capture Rotation: " + captureRotation
+                + "; CameraFacing: " + (mCameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT ? "Front" : "Back")
+                + "; Preview Resolution - Width: " + mPreviewSize.getWidth() + ", Height: " + mPreviewSize.getHeight()
+                + "; Capture Resolution - Width: " + mCaptureSize.getWidth() + ", Height: " + mCaptureSize.getHeight());
 
         return captureRotation;
     }
@@ -429,10 +450,10 @@ public class Camera1 extends CameraImpl {
     private void adjustCameraParameters() {
         initResolutions();
 
-        boolean invertPreviewSizes = mDisplayOrientation%180 != 0;
+        boolean invertPreviewSizes = (mCameraInfo.orientation + mDisplayOrientation) % 180 == 0;
         mPreview.setTruePreviewSize(
-                invertPreviewSizes? getPreviewResolution().getHeight() : getPreviewResolution().getWidth(),
-                invertPreviewSizes? getPreviewResolution().getWidth() : getPreviewResolution().getHeight()
+                invertPreviewSizes ? getPreviewResolution().getHeight() : getPreviewResolution().getWidth(),
+                invertPreviewSizes ? getPreviewResolution().getWidth() : getPreviewResolution().getHeight()
         );
 
         mCameraParameters.setPreviewSize(

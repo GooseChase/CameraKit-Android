@@ -231,6 +231,24 @@ class Camera2 extends CameraImpl {
         return mCamera != null;
     }
 
+    @Override
+    boolean frontCameraOnly() {
+        try {
+            for (final String cameraId : mCameraManager.getCameraIdList()) {
+                CameraCharacteristics characteristics = mCameraManager.getCameraCharacteristics(cameraId);
+                @SuppressWarnings("ConstantConditions")
+                int orientation = characteristics.get(CameraCharacteristics.LENS_FACING);
+                if (orientation == CameraCharacteristics.LENS_FACING_BACK) {
+                    return false;
+                }
+            }
+
+            return true;
+        } catch (CameraAccessException e) {
+            throw new RuntimeException("Failed to get camera view angles", e);
+        }
+    }
+
     @Nullable
     @Override
     CameraProperties getCameraProperties() {

@@ -1,13 +1,10 @@
 package com.flurgle.camerakit;
 
 import android.content.Context;
-import android.util.Log;
 import android.util.SparseIntArray;
 import android.view.Display;
 import android.view.OrientationEventListener;
 import android.view.Surface;
-
-import static android.R.attr.rotation;
 
 public abstract class DisplayOrientationDetector {
 
@@ -16,9 +13,9 @@ public abstract class DisplayOrientationDetector {
     static final SparseIntArray DISPLAY_ORIENTATIONS = new SparseIntArray();
     static {
         DISPLAY_ORIENTATIONS.put(Surface.ROTATION_0, 0);
-        DISPLAY_ORIENTATIONS.put(Surface.ROTATION_90, 90);
+        DISPLAY_ORIENTATIONS.put(Surface.ROTATION_90, 90);    // Display rotation 3 is actually an orientation of 90
         DISPLAY_ORIENTATIONS.put(Surface.ROTATION_180, 180);
-        DISPLAY_ORIENTATIONS.put(Surface.ROTATION_270, 270);
+        DISPLAY_ORIENTATIONS.put(Surface.ROTATION_270, 270);  // Display rotation of 1 is actually an orientation of 270
     }
 
     private Display mDisplay;
@@ -47,13 +44,15 @@ public abstract class DisplayOrientationDetector {
 
                 int deviceOrientation;
                 if (orientation >= 60 && orientation <= 140){
-                    deviceOrientation = DISPLAY_ORIENTATIONS.get(Surface.ROTATION_90);
+                    // the mDisplay.getRotation stuff is messed. This keeps it consistent.
+                    deviceOrientation = 270;
                 } else if (orientation >= 140 && orientation <= 220) {
-                    deviceOrientation = DISPLAY_ORIENTATIONS.get(Surface.ROTATION_180);
+                    deviceOrientation = 180;
                 } else if (orientation >= 220 && orientation <= 300) {
-                    deviceOrientation = DISPLAY_ORIENTATIONS.get(Surface.ROTATION_270);
+                    // the mDisplay.getRotation stuff is messed. This keeps it consistent.
+                    deviceOrientation = 90;
                 } else {
-                    deviceOrientation = DISPLAY_ORIENTATIONS.get(Surface.ROTATION_0);
+                    deviceOrientation = 0;
                 }
 
                 if (mLastKnownDeviceOrientation != deviceOrientation) {
@@ -62,7 +61,6 @@ public abstract class DisplayOrientationDetector {
                 }
 
                 if(somethingChanged){
-                    Log.i("DisplayOrientation", "SOMETHING CHANGED: " + DISPLAY_ORIENTATIONS.get(rotation) + "; HANDHELD: " + deviceOrientation);
                     dispatchOnDisplayOrientationChanged(DISPLAY_ORIENTATIONS.get(displayRotation), mLastKnownDeviceOrientation);
                 }
             }

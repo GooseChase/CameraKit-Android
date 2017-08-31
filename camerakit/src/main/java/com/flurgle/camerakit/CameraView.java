@@ -23,9 +23,12 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.hardware.display.DisplayManagerCompat;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
+import android.view.Surface;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import java.io.ByteArrayOutputStream;
@@ -147,6 +150,14 @@ public class CameraView extends FrameLayout implements LifecycleObserver {
         mCameraImpl = new Camera1(mCameraListener, mPreviewImpl);
 
         mIsStarted = false;
+
+        // Handle situations where there's only 1 camera & it's front facing OR it's a chromebook in laptop mode
+        WindowManager windowService = (WindowManager)context.getSystemService(Context.WINDOW_SERVICE);
+        boolean isChromebookInLaptopMode = (context.getPackageManager().hasSystemFeature("org.chromium.arc.device_management") && windowService.getDefaultDisplay().getRotation() == Surface.ROTATION_0);
+        if(mCameraImpl.frontCameraOnly() || isChromebookInLaptopMode){
+            mFacing = FACING_FRONT;
+        }
+
         setFacing(mFacing);
         setFlash(mFlash);
         setFocus(mFocus);
@@ -473,6 +484,7 @@ public class CameraView extends FrameLayout implements LifecycleObserver {
         @Override
         public void onCameraOpened() {
             super.onCameraOpened();
+
             getCameraListener().onCameraOpened();
         }
 
@@ -485,6 +497,11 @@ public class CameraView extends FrameLayout implements LifecycleObserver {
         @Override
         public void onPictureTaken(byte[] jpeg) {
             super.onPictureTaken(jpeg);
+
+            Log.i("CameraView", "onPictureTaken - Exif Orientation: " + ExifUtil.getExifOrientation(jpeg)
+                    + "; Camera Facing: " + (mFacing == FACING_FRONT ? "Front" : "Back")
+                    + "; Preview Resolution - Width: " + mCameraImpl.getPreviewResolution().getWidth() + "; Height: " + mCameraImpl.getPreviewResolution().getHeight()
+                    + "; Capture Resolution - Width: " + mCameraImpl.getCaptureResolution().getWidth() + "; Height: " + mCameraImpl.getCaptureResolution().getHeight());
 
             // Handle cameras that don't give us the correctly rotated/mirrored image, but instead just set the corresponding EXIF data.
             // Exif data is lost when we do a BitmapFactory.decodeByteArray, so need to correct image here.
