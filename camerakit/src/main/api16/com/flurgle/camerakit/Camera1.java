@@ -432,7 +432,7 @@ public class Camera1 extends CameraImpl {
         if (mCameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
             captureRotation = ((captureRotation - (mDisplayOrientation - mDeviceOrientation)) + 360) % 360;
         } else {  // back-facing camera
-            captureRotation = (captureRotation + (mDisplayOrientation - mDeviceOrientation) + 720) % 360;
+            captureRotation = (captureRotation + (mDisplayOrientation - mDeviceOrientation) + 360) % 360;
         }
 
         Log.i("CameraView", "calculateCaptureRotation - CameraOrientation: " + mCameraInfo.orientation
