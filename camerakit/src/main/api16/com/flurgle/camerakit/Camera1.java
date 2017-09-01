@@ -427,7 +427,7 @@ public class Camera1 extends CameraImpl {
             captureRotation = (mCameraInfo.orientation - mDisplayOrientation + 360) % 360;
         }
 
-        // Accommodate for any extra device rotation from fixed displays
+        // Accommodate for any extra device rotation relative to fixed screen orientations
         // (e.g. activity fixed in portrait, but user took photo/video in landscape)
         if (mCameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
             captureRotation = ((captureRotation - (mDisplayOrientation - mDeviceOrientation)) + 360) % 360;
