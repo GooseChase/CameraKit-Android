@@ -42,6 +42,7 @@
             <enum name="strict" value="0" />
             <enum name="lazy" value="1" />
             <enum name="picture" value="2" />
+            <enum name="off" value="3" />
         </attr>
 
         <attr name="ckJpegQuality" format="integer" />

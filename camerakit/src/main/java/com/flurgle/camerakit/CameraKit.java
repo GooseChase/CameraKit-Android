@@ -38,6 +38,7 @@ public class CameraKit {
         public static final int PERMISSIONS_STRICT = 0;
         public static final int PERMISSIONS_LAZY = 1;
         public static final int PERMISSIONS_PICTURE = 2;
+        public static final int PERMISSIONS_OFF = 3;
 
         public static final int VIDEO_QUALITY_480P = 0;
         public static final int VIDEO_QUALITY_720P = 1;
