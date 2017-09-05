@@ -265,7 +265,6 @@ public class Camera1 extends CameraImpl {
         initMediaRecorder();
         prepareMediaRecorder();
         mMediaRecorder.start();
-        mCameraListener.onVideoStarted();
     }
 
     @Override
@@ -435,15 +434,6 @@ public class Camera1 extends CameraImpl {
         } else {  // back-facing camera
             captureRotation = (captureRotation + (mDisplayOrientation - mDeviceOrientation) + 360) % 360;
         }
-
-        Log.i("CameraView", "calculateCaptureRotation - CameraOrientation: " + mCameraInfo.orientation
-                + "; Preview Rotation: " + calculatePreviewRotation()
-                + "; Display Orientation: " + mDisplayOrientation
-                + "; Device Orientation: " + mDeviceOrientation
-                + "; Capture Rotation: " + captureRotation
-                + "; CameraFacing: " + (mCameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT ? "Front" : "Back")
-                + "; Preview Resolution - Width: " + mPreviewSize.getWidth() + ", Height: " + mPreviewSize.getHeight()
-                + "; Capture Resolution - Width: " + mCaptureSize.getWidth() + ", Height: " + mCaptureSize.getHeight());
 
         return captureRotation;
     }

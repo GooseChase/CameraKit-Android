@@ -13,9 +13,9 @@ public abstract class DisplayOrientationDetector {
     static final SparseIntArray DISPLAY_ORIENTATIONS = new SparseIntArray();
     static {
         DISPLAY_ORIENTATIONS.put(Surface.ROTATION_0, 0);
-        DISPLAY_ORIENTATIONS.put(Surface.ROTATION_90, 90);    // Display rotation 3 is actually an orientation of 90
+        DISPLAY_ORIENTATIONS.put(Surface.ROTATION_90, 90);
         DISPLAY_ORIENTATIONS.put(Surface.ROTATION_180, 180);
-        DISPLAY_ORIENTATIONS.put(Surface.ROTATION_270, 270);  // Display rotation of 1 is actually an orientation of 270
+        DISPLAY_ORIENTATIONS.put(Surface.ROTATION_270, 270);
     }
 
     private Display mDisplay;
@@ -44,12 +44,12 @@ public abstract class DisplayOrientationDetector {
 
                 int deviceOrientation;
                 if (orientation >= 60 && orientation <= 140){
-                    // the mDisplay.getRotation stuff is messed. This keeps it consistent.
+                    // the mDisplay.getRotation stuff is flipped for 90 & 270 vs. deviceOrientation here. This keeps it consistent.
                     deviceOrientation = 270;
                 } else if (orientation >= 140 && orientation <= 220) {
                     deviceOrientation = 180;
                 } else if (orientation >= 220 && orientation <= 300) {
-                    // the mDisplay.getRotation stuff is messed. This keeps it consistent.
+                    // the mDisplay.getRotation stuff is flipped for 90 & 270 vs. deviceOrientation here. This keeps it consistent.
                     deviceOrientation = 90;
                 } else {
                     deviceOrientation = 0;

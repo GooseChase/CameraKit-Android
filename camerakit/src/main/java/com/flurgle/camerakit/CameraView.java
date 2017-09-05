@@ -23,7 +23,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.hardware.display.DisplayManagerCompat;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.Surface;
@@ -44,7 +43,6 @@ import static com.flurgle.camerakit.CameraKit.Constants.FLASH_ON;
 import static com.flurgle.camerakit.CameraKit.Constants.FLASH_TORCH;
 import static com.flurgle.camerakit.CameraKit.Constants.METHOD_STANDARD;
 import static com.flurgle.camerakit.CameraKit.Constants.PERMISSIONS_LAZY;
-import static com.flurgle.camerakit.CameraKit.Constants.PERMISSIONS_OFF;
 import static com.flurgle.camerakit.CameraKit.Constants.PERMISSIONS_PICTURE;
 import static com.flurgle.camerakit.CameraKit.Constants.PERMISSIONS_STRICT;
 
@@ -307,8 +305,6 @@ public class CameraView extends FrameLayout implements LifecycleObserver {
                     return;
                 }
                 break;
-            case PERMISSIONS_OFF:
-                break;
         }
 
         sWorkerHandler.post(new Runnable() {
@@ -498,11 +494,6 @@ public class CameraView extends FrameLayout implements LifecycleObserver {
         public void onPictureTaken(byte[] jpeg) {
             super.onPictureTaken(jpeg);
 
-            Log.i("CameraView", "onPictureTaken - Exif Orientation: " + ExifUtil.getExifOrientation(jpeg)
-                    + "; Camera Facing: " + (mFacing == FACING_FRONT ? "Front" : "Back")
-                    + "; Preview Resolution - Width: " + mCameraImpl.getPreviewResolution().getWidth() + "; Height: " + mCameraImpl.getPreviewResolution().getHeight()
-                    + "; Capture Resolution - Width: " + mCameraImpl.getCaptureResolution().getWidth() + "; Height: " + mCameraImpl.getCaptureResolution().getHeight());
-
             // Handle cameras that don't give us the correctly rotated/mirrored image, but instead just set the corresponding EXIF data.
             // Exif data is lost when we do a BitmapFactory.decodeByteArray, so need to correct image here.
             if(ExifUtil.getExifOrientation(jpeg) != ExifInterface.ORIENTATION_NORMAL || mFacing == FACING_FRONT){
@@ -533,12 +524,6 @@ public class CameraView extends FrameLayout implements LifecycleObserver {
                 yuv.compressToJpeg(new Rect(0, 0, yuv.getWidth(), yuv.getHeight()), mJpegQuality, out);
                 getCameraListener().onPictureTaken(out.toByteArray());
             }
-        }
-
-        @Override
-        public void onVideoStarted() {
-            super.onVideoStarted();
-            getCameraListener().onVideoStarted();
         }
 
         @Override
