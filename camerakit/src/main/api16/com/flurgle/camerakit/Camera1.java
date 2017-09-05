@@ -265,6 +265,7 @@ public class Camera1 extends CameraImpl {
         initMediaRecorder();
         prepareMediaRecorder();
         mMediaRecorder.start();
+        mCameraListener.onVideoStarted();
     }
 
     @Override

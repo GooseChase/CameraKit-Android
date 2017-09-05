@@ -22,6 +22,10 @@ public abstract class CameraListener {
 
     }
 
+    public void onVideoStarted() {
+
+    }
+
     public void onVideoTaken(File video) {
 
     }

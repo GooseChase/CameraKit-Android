@@ -536,6 +536,12 @@ public class CameraView extends FrameLayout implements LifecycleObserver {
         }
 
         @Override
+        public void onVideoStarted() {
+            super.onVideoStarted();
+            getCameraListener().onVideoStarted();
+        }
+
+        @Override
         public void onVideoTaken(File video) {
             super.onVideoTaken(video);
             getCameraListener().onVideoTaken(video);
