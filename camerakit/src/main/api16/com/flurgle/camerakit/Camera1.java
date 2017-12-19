@@ -235,7 +235,11 @@ public class Camera1 extends CameraImpl {
                                 // Reset capturing state to allow photos to be taken
                                 capturingImage = false;
 
-                                camera.startPreview();
+                                // Wrapping in a try catch to try and avoid crashes.
+                                // https://fabric.io/goosechase/android/apps/com.goosechaseadventures.goosechase/issues/59aed6cfbe077a4dcc2822fc
+                                try {
+                                    camera.startPreview();
+                                } catch(Exception e){}
                             }
                         });
                 }
