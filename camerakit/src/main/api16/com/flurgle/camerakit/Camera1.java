@@ -5,7 +5,6 @@ import android.graphics.YuvImage;
 import android.hardware.Camera;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
-import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -331,7 +330,7 @@ public class Camera1 extends CameraImpl {
     // https://github.com/sandrios/sandriosCamera/blob/master/sandriosCamera/src/main/java/com/sandrios/sandriosCamera/internal/manager/impl/Camera1Manager.java#L212
     void initResolutions() {
         List<Size> previewSizes = sizesFromList(mCameraParameters.getSupportedPreviewSizes());
-        List<Size> videoSizes = (Build.VERSION.SDK_INT > 10) ? sizesFromList(mCameraParameters.getSupportedVideoSizes()) : previewSizes;
+        List<Size> videoSizes = sizesFromList(mCameraParameters.getSupportedVideoSizes());
 
         CamcorderProfile camcorderProfile = getCamcorderProfile(mVideoQuality);
 
@@ -440,6 +439,13 @@ public class Camera1 extends CameraImpl {
     }
 
     private void adjustCameraParameters() {
+        // Try and fix the following bug:
+        // https://fabric.io/goosechase/android/apps/com.goosechaseadventures.goosechase/issues/59aed6dabe077a4dcc282396
+        if(mCameraParameters == null){
+            // mCamera should also be valid here since you can only call this method after mCamera has been set or checked.
+            mCameraParameters = mCamera.getParameters();
+        }
+
         initResolutions();
 
         boolean invertPreviewSizes = (mCameraInfo.orientation + mDisplayOrientation) % 180 == 0;
