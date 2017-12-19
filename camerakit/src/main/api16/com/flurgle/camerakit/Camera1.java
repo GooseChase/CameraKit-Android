@@ -465,11 +465,10 @@ public class Camera1 extends CameraImpl {
         );
         int rotation = calculateCaptureRotation();
         mCameraParameters.setRotation(rotation);
+        mCamera.setParameters(mCameraParameters);
 
         setFocus(mFocus);
         setFlash(mFlash);
-
-        mCamera.setParameters(mCameraParameters);
     }
 
     private void collectCameraProperties() {
