@@ -673,12 +673,16 @@ public class Camera1 extends CameraImpl {
             public void run() {
                 if (camera != null) {
                     camera.cancelAutoFocus();
-                    Camera.Parameters params = camera.getParameters();
-                    if (params.getFocusMode() != Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE) {
-                        params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
-                        params.setFocusAreas(null);
-                        params.setMeteringAreas(null);
-                        camera.setParameters(params);
+                    try {
+                        Camera.Parameters params = camera.getParameters();
+                        if (params.getFocusMode() != Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE) {
+                            params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+                            params.setFocusAreas(null);
+                            params.setMeteringAreas(null);
+                            camera.setParameters(params);
+                        }
+                    } catch (Exception e) {
+                        Log.i(TAG, "Couldn't set parameters for focus");
                     }
 
                     if (mAutofocusCallback != null) {
