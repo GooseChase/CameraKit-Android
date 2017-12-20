@@ -273,10 +273,26 @@ public class Camera1 extends CameraImpl {
 
     @Override
     void endVideo() {
-        mMediaRecorder.stop();
-        mMediaRecorder.release();
-        mMediaRecorder = null;
-        mCameraListener.onVideoTaken(mVideoFile);
+        // Try to fix this bug:
+        // https://fabric.io/goosechase/android/apps/com.goosechaseadventures.goosechase/issues/59aee2b5be077a4dcc28a5bd
+        try {
+            mMediaRecorder.stop();
+            mMediaRecorder.release();
+            mMediaRecorder = null;
+            mCameraListener.onVideoTaken(mVideoFile);
+        } catch (Exception e) {
+            if(mMediaRecorder != null){
+                mMediaRecorder.release();
+            }
+
+            mMediaRecorder = null;
+            if(mVideoFile != null){
+                mVideoFile.delete();
+                mVideoFile = null;
+            }
+
+            mCameraListener.onVideoFailed();
+        }
     }
 
     // Code from SandriosCamera library
