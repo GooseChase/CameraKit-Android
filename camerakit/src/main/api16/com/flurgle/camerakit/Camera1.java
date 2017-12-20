@@ -291,7 +291,7 @@ public class Camera1 extends CameraImpl {
                 mVideoFile = null;
             }
 
-            mCameraListener.onVideoFailed();
+            mCameraListener.onVideoFailed(e);
         }
     }
 

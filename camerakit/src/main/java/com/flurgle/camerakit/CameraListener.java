@@ -30,7 +30,7 @@ public abstract class CameraListener {
 
     }
 
-    public void onVideoFailed() {
+    public void onVideoFailed(Exception e) {
 
     }
 }

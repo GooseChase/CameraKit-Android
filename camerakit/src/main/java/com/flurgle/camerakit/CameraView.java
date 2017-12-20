@@ -542,9 +542,9 @@ public class CameraView extends FrameLayout implements LifecycleObserver {
         }
 
         @Override
-        public void onVideoFailed() {
-            super.onVideoFailed();
-            getCameraListener().onVideoFailed();
+        public void onVideoFailed(Exception e) {
+            super.onVideoFailed(e);
+            getCameraListener().onVideoFailed(e);
         }
 
         public void setCameraListener(@Nullable CameraListener cameraListener) {
