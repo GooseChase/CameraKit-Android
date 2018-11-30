@@ -3,7 +3,7 @@ package com.flurgle.camerakit.demo;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
